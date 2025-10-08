@@ -1,0 +1,1063 @@
+@charset "UTF-8";
+/*!
+  Modified from: 
+  Blitz — CSS framework for reflowable eBooks
+  Version 1.5.2 by Jiminy Panoz
+  Codename: Cool Under Heat
+  License: MIT (https://opensource.org/licenses/MIT)
+*/
+/* Begin CSS */
+/* RESET */
+/* So here's the trick, we must reset to manage a number of problems once and for all:
+- HTML5 backwards compatibility (EPUB 3 file in EPUB 2 app);
+- user settings (e.g. line-height on Kobo and Kindle);
+- CSS bloat (DRY);
+- KFX for which a reset using `border: 0` seems to disable support;
+- etc.
+It all started as a normalize and became a reset given the magnitude of the task.
+*/
+article,
+address,
+aside,
+blockquote,
+canvas,
+dd,
+details,
+div,
+dl,
+dt,
+figure,
+figcaption,
+footer,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+header,
+hr,
+li,
+main,
+nav,
+ol,
+p,
+pre,
+section,
+summary,
+ul {
+  margin: 0;
+  padding: 0;
+  /* RS may apply vertical padding to el such as p */
+  font-size: 1em;
+  /* Font size in pixel disable the user setting in legacy RMSDK */
+  line-height: inherit;
+  /* Kindle ignores it, Kobo needs it. If you don’t use inherit, the user setting may be disabled on some Kobo devices */
+  text-indent: 0;
+  font-style: inherit;
+  font-weight: inherit;
+}
+
+/* This is absolutely necessary for backwards compatibility */
+article,
+aside,
+figure,
+figcaption,
+footer,
+header,
+main,
+nav,
+section {
+  display: block;
+}
+
+[hidden] {
+  display: none;
+}
+
+/* [Opinionated] Default to prevent RS from justifying all of these! */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+dt,
+pre {
+  text-align: left;
+}
+
+a,
+abbr,
+b,
+bdi,
+bdo,
+cite,
+code,
+data,
+del,
+dfn,
+em,
+i,
+ins,
+kbd,
+mark,
+q,
+rp,
+rt,
+rtc,
+ruby,
+s,
+samp,
+small,
+span,
+strong,
+sub,
+sup,
+time,
+var {
+  font-size: inherit;
+  vertical-align: baseline;
+  font-style: inherit;
+  /* Taking nesting of inline elements into account (e.g. sup nested in em) */
+  font-weight: inherit;
+  /* Taking nestiog of inline elements into account (e.g. em nested in strong) */
+  color: inherit;
+  text-decoration: none;
+}
+
+q {
+  quotes: none;
+}
+
+/* Trying to prevent blank page if element with margin-bottom at the end of xhtml */
+body > :last-child,
+body > section > :last-child {
+  margin-bottom: 0;
+}
+
+body {
+  font-size: 100%;
+  line-height: 1.5;
+  margin: 0;
+  /* RS will override margins anyways */
+  padding: 0;
+  widows: 2;
+  /* iBooks and Kobo support widows and orphans */
+  orphans: 2;
+}
+
+/* TYPOGRAPHY */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  -ms-hyphens: none;
+  -moz-hyphens: none;
+  -webkit-hyphens: none;
+  -epub-hyphens: none;
+  hyphens: none;
+  page-break-inside: avoid;
+  break-inside: avoid;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+/* MICRO TYPOGRAPHY */
+a {
+  text-decoration: underline;
+  /* Note: KF8 will force this value unless you use "el.class a" */
+  font-weight: bold;
+  color: inherit;
+  -webkit-text-fill-color: inherit;
+  /* iBooks override (iOS 9 + El Capitan in night mode) */
+  /* inherit = text color */
+}
+
+i,
+cite,
+dfn,
+em {
+  font-style: italic;
+}
+
+b,
+strong {
+  font-weight: bold;
+}
+
+del,
+s {
+  text-decoration: line-through;
+}
+
+mark {
+  background-color: yellow;
+  color: inherit;
+}
+
+small {
+  font-size: 0.8125em;
+}
+
+/* Styling is improved to prevent sub from affecting line-height */
+sub {
+  font-size: 75%;
+  line-height: 1.2;
+  vertical-align: sub;
+  /* Fallback */
+  vertical-align: -20%;
+}
+
+/* Styling is improved to prevent sup from affecting line-height */
+sup {
+  font-size: 75%;
+  line-height: 1.2;
+  vertical-align: super;
+  /* Fallback */
+  vertical-align: 33%;
+}
+
+/* IMAGES  */
+img {
+  width: auto;
+  max-width: 100%;
+  /* Note: KF8 doesn't support max-width hence "width: auto;" as fallback */
+  height: auto;
+  object-fit: contain;
+  vertical-align: bottom;
+  /* Remove gap after the image */
+}
+
+/* HORIZONTAL RULES — CONTEXT BREAKS */
+hr {
+  width: 25%;
+  margin-left: 37.5%;
+  margin-top: 1.4375em;
+  margin-bottom: 1.4375em;
+  height: 0;
+  border: none;
+  border-top: 0.125em solid currentColor;
+  /* currentColor = color of text (getting around night mode) */
+  opacity: 0.5;
+  /* Opacity -> grayscale. If opacity is declared for too many elements in a XHTML file, performance of legacy RMSDK takes a hit */
+}
+
+/* TABLES */
+table {
+  display: table;
+  table-layout: auto;
+  border-collapse: collapse;
+  border-spacing: 0;
+  max-width: 100%;
+  margin: 0 auto; /* NOTE changed from 1.5em auto cf. tablewrap in ams.css  */
+  /* Note: legacy RMSDK sets auto to 0, which is permitted in a footnote of the EPUB2 specs */
+  font-feature-settings: "tnum" 1;
+  font-variant-numeric: tabular-nums;
+}
+
+caption {
+  caption-side: top;
+  /* Note: only value legacy RMSDK supports */
+  hyphens: none;
+  text-indent: 0;
+  /* Necessary as RS may define text-indent for p */
+  text-align: center;
+  font-weight: bold;
+}
+
+/* CODE */
+pre {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  tab-size: 2;
+}
+
+code,
+kbd,
+samp,
+var {
+  font-family: monospace;
+  /* Embed a font cos Kobo doesn't provide a monospace */
+}
+
+/* End CSS */
+/* Headings */
+h1 {
+  font-size: 1.4375em;
+  line-height: 1.04347826;
+  margin-top: 0em;
+  margin-bottom: 2.08695652em;
+}
+
+h2 {
+  font-size: 1.3125em;
+  line-height: 1.14285714;
+  margin-top: 2.28571429em;
+  margin-bottom: 1.14285714em;
+}
+
+h3 {
+  font-size: 1.125em;
+  line-height: 1.33333333;
+  margin-top: 1.33333333em;
+  margin-bottom: 1.33333333em;
+}
+
+h4 {
+  font-size: 1em;
+  line-height: 1.5;
+  margin-top: 1.5em;
+  margin-bottom: 0em;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
+}
+
+/* Blockquote */
+blockquote {
+  margin: 1.5em;
+}
+
+blockquote::before,
+blockquote::after {
+  display: block;
+  content: "";
+  height: 2px;
+  background-color: currentColor;
+  opacity: 0.3;
+}
+
+/* italic inversion */
+i em,
+em em {
+  font-style: normal;
+}
+
+/* NOTE: we do not have triple nested cases (e.g., `em em em`). */
+/* NOTE: the other advanced situations (`.italic/.roman em` etc) have no use cases right now; they should be solved more generally across the toolchain. */
+/* pre */
+pre {
+  font-family: "SourceCodeVF", monospace;
+  margin: 1.5em 0;
+}
+
+/* AMS custom styles */
+/* Basic font stacks */
+/* 
+  variable fonts
+   */
+@font-face {
+  font-display: swap;
+  font-family: "STIXTwoText";
+  src: url("fonts/STIXTwoText-variable.woff2") format("woff2");
+  font-weight: 1 999;
+}
+@font-face {
+  font-display: swap;
+  font-family: "STIXTwoText";
+  font-style: italic;
+  src: url("fonts/STIXTwoText-Italic-variable.woff2") format("woff2");
+  font-weight: 1 999;
+}
+@font-face {
+  font-display: swap;
+  font-family: "SourceSans3VF";
+  src: url("fonts/SourceSans3VF-Upright.otf.woff2") format("woff2");
+  font-weight: 1 999;
+}
+@font-face {
+  font-display: swap;
+  font-family: "SourceSans3VF";
+  font-style: italic;
+  src: url("fonts/SourceSans3VF-Italic.otf.woff2") format("woff2");
+  font-weight: 1 999;
+}
+@font-face {
+  font-display: swap;
+  font-family: "SourceCodeVF";
+  src: url("fonts/SourceCodeVF-Upright.otf.woff2") format("woff2");
+  font-weight: 1 999;
+}
+@font-face {
+  font-display: swap;
+  font-family: "SourceCodeVF";
+  font-style: italic;
+  src: url("fonts/SourceCodeVF-Italic.otf.woff2") format("woff2");
+  font-weight: 1 999;
+}
+body {
+  font-family: "STIXTwoText", "Times New Roman", TimesNewRoman, Times, Baskerville, Georgia, serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bolder;
+}
+
+/* matches p */
+h3,
+h4,
+h5,
+h6 {
+  font-size: 1em;
+  margin: 1em 0;
+  text-align: left;
+}
+
+p {
+  display: block;
+  margin: 1em 0;
+}
+
+a {
+  font-style: normal; /* prevent inheritance */
+}
+
+/* Definition lists*/
+/* DLs without div (currently: from ref-list) */
+dl {
+  display: block;
+  margin: 1em 0;
+}
+
+dl::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+dt {
+  display: block;
+  float: left;
+  clear: left;
+  padding-right: 0.5em;
+}
+
+dd {
+  display: block;
+}
+
+/* DLs with div (currently: from def-list)*/
+dl > div {
+  align-items: baseline;
+  display: flex;
+  width: 100%;
+}
+
+dl > div > dt {
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 3rem;
+  text-align: right;
+  font-style: normal;
+  margin-right: 0.2rem;
+}
+
+dl > div > dd {
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+}
+
+/* tighter paragraphs and sublists */
+dl dl,
+dd > p {
+  margin-bottom: 0.25em;
+  margin-top: 0.25em;
+}
+
+dd > p:first-of-type {
+  margin-top: 0;
+}
+
+dd > p:last-of-type {
+  margin-bottom: 0;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+*:focus {
+  outline: 1px dotted currentColor;
+}
+
+u {
+  text-decoration-skip-ink: auto;
+}
+
+.description__term {
+  font-weight: bold;
+  font-style: normal;
+  text-align: left;
+  min-width: 0;
+}
+
+.roman {
+  font-style: normal;
+  font-weight: normal;
+}
+
+.oblique {
+  font-style: oblique;
+  font-weight: normal;
+}
+
+/* Text styles */
+.bold {
+  font-weight: bold;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.bold-italic {
+  font-weight: bold;
+  font-style: italic;
+}
+
+.small-caps {
+  font-style: normal;
+  font-variant: small-caps;
+  letter-spacing: 0.0625em;
+}
+
+/* Font families */
+.sans-serif {
+  font-family: "SourceSans3VF", sans-serif;
+}
+
+.monospace {
+  font-family: "SourceCodeVF", monospace;
+}
+
+/* bold italic */
+.bolditalic {
+  font-weight: bold;
+  font-style: italic;
+}
+
+.math--inline {
+  white-space: nowrap;
+}
+
+.math--block {
+  display: block;
+  margin: 1em 0; /* NOTE: match margin for p */
+  /* NOTE MathJax v3 markup fails to shrink when tables are involved; scrolling containers as fallback */
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+.math--text {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+/* NOTE: we might eventually need styles for the labels */
+/* our customize styles for MathJax output */
+.mjx-overflow {
+  overflow: visible;
+  min-height: 1px !important;
+}
+
+/* NOTE use {stroke-width: 0} overrides MathJax's value of 3 (which comes out very thick in most PDF viewers when using print-to-PDF) */
+.mjx-overflow use {
+  stroke-width: 0;
+}
+
+/* NOTE .mjx-solid is a mathjax-generated class; cf. mathjax/MathJax-src#874 */
+.mjx-solid {
+  stroke-width: 70px;
+  fill: none;
+}
+
+/* "Proper" figures (with graphics, tables, subfigures etc) */
+.figure {
+  margin: 1.5em 0;
+  break-inside: auto;
+  page-break-inside: auto;
+  font-style: normal;
+}
+
+.figure__caption {
+  font-size: 0.9375em; /* print is more like 0.8125rem but that seems too small*/
+  line-height: 1.6;
+  width: fit-content;
+  max-width: calc(100% - 6rem); /* 2x(each side) 2xparindent (cf. list) */
+  margin: 0 auto;
+}
+
+/* Figure content (graphics/tables/subfigures, potentially multiple ones) */
+.figure__content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+/* Bibliography */
+.biblioentry__backlinks {
+  display: block;
+  margin: 0 1em 1em 2em;
+}
+
+.biblioentry__backlinks__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.biblioentry__backlinks__list [role=doc-backlink] > [data-ams-doc=label]::after {
+  content: ".";
+}
+
+/* Proof box */
+.proof__box {
+  display: block;
+  margin-top: -1.5em;
+  text-align: right;
+}
+
+.proof__box--inline {
+  float: right;
+  margin-top: 0;
+}
+
+/* asterism */
+.asterism::before {
+  content: "* * *";
+  font-size: larger;
+  letter-spacing: 1rem;
+  color: black;
+  line-height: 1;
+}
+
+.asterism {
+  height: 1em;
+  width: auto;
+  margin: 1em auto;
+  font-size: larger;
+  border: none;
+  text-align: center;
+  overflow: visible;
+}
+
+.heading {
+  padding-right: 1em;
+}
+
+.heading--subsection {
+  font-weight: bolder;
+}
+
+.heading--subsubsection {
+  font-weight: normal;
+  font-style: italic;
+}
+
+.heading--subsubsection > [data-ams-doc=label] {
+  font-style: normal;
+}
+
+.heading--paragraph {
+  font-weight: normal;
+}
+
+/* Theorem styles */
+.theorem__header {
+  font-style: normal; /* NOTE. Ensure upright in, e.g., .theorem--plain */
+  padding-right: 0.5em;
+}
+
+.theorem__header__label {
+  font-weight: bolder;
+}
+
+.theorem__header--proof {
+  font-weight: bolder;
+}
+
+.theorem__header--block {
+  /* NOTE extends .paragraph */
+  display: block;
+  margin: 1em 0;
+  text-indent: 0;
+  text-align: left !important;
+  font-size: 1em;
+  line-height: inherit;
+}
+
+.theorem--thmplain {
+  font-style: italic;
+}
+
+.theorem--thmplain em {
+  font-style: normal;
+}
+
+/* Epigraph */
+.epigraph::before,
+.epigraph::after {
+  display: none; /* reset blockquote*/
+}
+
+.epigraph > p,
+.epigraph > footer {
+  text-align: right;
+}
+
+.epigraph > p {
+  font-style: italic;
+}
+
+.epigraph > p em {
+  font-style: normal;
+}
+
+.epigraph > footer::before {
+  content: "—";
+}
+
+/* Table wrapper */
+.tablewrap {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 0 2px; /* NOTE workaround for browser bugs, cf. AmerMathSoc/ams-html#532 */
+  margin-bottom: 1em; /* NOTE: vertical margins "moved" here from table in blitcss-epub.css because overflow creates block formatting context */
+}
+
+table .math--inline svg {
+  max-width: none; /* NOTE prevents equations from shrinking while allowing TDs to shrink/linewrap. */
+}
+
+/* Support simpletabbing markup - STML68 only*/
+.simpletabbing {
+  margin-left: 1em;
+}
+
+.line {
+  margin: 0;
+}
+
+.line--indent-1 {
+  margin-left: 1em;
+}
+
+.line--indent-2 {
+  margin-left: 2em;
+}
+
+.line--indent-3 {
+  margin-left: 3em;
+}
+
+/* algorithm layout */
+.algorithm {
+  border-bottom: 2px solid currentColor;
+}
+
+.algorithm__caption__content {
+  border-top: 2px solid currentColor;
+  border-bottom: 1px solid currentColor;
+}
+
+alg-algorithm {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  align-items: baseline;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  --algBlockLevel: 0;
+}
+
+alg-line {
+  display: contents;
+}
+
+alg-block {
+  display: contents;
+}
+
+alg-statement {
+  grid-column-start: 2;
+  margin-left: calc(1em * var(--algBlockLevel));
+}
+
+.alg--spanslineno {
+  grid-column: 1/span 2;
+  text-indent: -1em; /* HACK hanging indentation; replace with "1em hanging" once support improves https://caniuse.com/css-text-indent */
+  padding-left: 1em; /*  HACK hanging indentation; replace with "1em hanging" once support improves https://caniuse.com/css-text-indent */
+}
+
+.alg--spanslineno > * {
+  text-indent: 0; /*  NOTE reset for hanging indentation hack to avoid inline-block children overlapping text */
+}
+
+alg-lineno {
+  grid-column-start: 1;
+  font-size: 0.9em; /* TODO unify <1em font-sizes */
+  padding-right: 0.4rem;
+  min-width: 1rem; /* NOTE looks poorly when there are no linenumbers at all; but dropping min-width would still leave the padding */
+  text-align: right;
+}
+
+alg-comment::before {
+  content: "▷";
+  display: inline-block;
+  font-size: 0.7em; /* TODO unify <1em font-sizes */
+  vertical-align: 0.15em; /* TODO this is likely font-dependent; can we do better? */
+  padding-right: 0.4rem;
+}
+
+.boxed {
+  border: 0.0625em solid currentColor;
+  padding: 0.6875em; /* TODO leftover from blitzcss - check if we want to revise  drop (amstext44 only so far) */
+}
+
+/* tcolorbox */
+.tcolorbox {
+  border-radius: 0.5em;
+  padding: 0.5em;
+  margin: 1.13em 0;
+}
+
+/* citations */
+cite-group {
+  font-style: normal;
+}
+
+cite-detail {
+  font-weight: normal;
+}
+
+.refgroup {
+  font-style: normal;
+}
+
+.cip__loc {
+  margin: 0;
+  margin-left: 1em;
+}
+
+.cip__loc::first-letter {
+  margin-left: -1em;
+}
+
+.inline-graphic {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  vertical-align: baseline;
+}
+
+/* Titlepage */
+.titlepage__title {
+  font-size: 1.625em;
+  line-height: 0.92307692;
+}
+
+.titlepage__subtitle {
+  font-size: 1.3125em;
+  line-height: 1.14285714;
+  font-weight: bolder;
+  margin: -2em 0 2em;
+}
+
+.titlepage__logo {
+  margin: 1em;
+  min-width: 10em;
+  width: 40%;
+}
+
+.titlepage__series {
+  margin-bottom: 3em;
+  font-size: 1.3125em;
+  line-height: 1.14285714;
+}
+
+.titlepage__contributors {
+  font-size: 1.3125em;
+  line-height: 1.14285714;
+}
+
+.titlepage__contributors--primary {
+  font-weight: bold;
+  margin-bottom: 0.25em;
+  margin-top: 0;
+}
+
+.titlepage__contributors--primary:last-of-type {
+  margin-bottom: 1.5em;
+}
+
+.titlepage__contributors--secondary {
+  margin: 0;
+}
+
+.titlepage__contributors__byline {
+  font-size: 1.125em;
+  line-height: 1.33333333;
+  margin: 0.75em 0 0 0;
+}
+
+.titlepage__footer {
+  margin-top: 10rem;
+}
+
+nav ol {
+  list-style: none !important;
+  padding-left: 1em;
+}
+
+nav a {
+  font-weight: 500;
+  margin-top: 0.5em;
+  display: inline-block;
+}
+
+nav a [data-ams-doc=label] + [data-ams-doc=title]::before {
+  content: " ";
+}
+
+nav a[data-ams-ref=part] {
+  font-weight: 900;
+}
+
+a[data-ams-ref=part] + ol {
+  padding: 0;
+}
+
+a[data-ams-ref=section] {
+  margin-top: 0;
+}
+/* SURV series customizations */
+/* Headings */
+h1,
+h2 {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+h1 {
+  font-size: 1.5rem;
+  line-height: 1.2;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+h2 {
+  font-size: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.part__title,
+.part__label {
+  display: block;
+  text-transform: revert;
+  font-weight: normal;
+  font-variant: normal;
+}
+
+.part__title {
+  font-size: 2rem;
+  margin-top: 2rem;
+}
+
+.part__label {
+  margin-top: 25vh;
+  font-size: 1.5rem;
+}
+
+.chapter__label,
+.chapter__title {
+  display: block;
+}
+
+.chapter__label {
+  font-weight: normal;
+  text-transform: uppercase;
+  font-size: 1rem;
+  line-height: 1.33333333;
+  margin-top: 10vh;
+  margin-bottom: 2.4rem;
+}
+
+.chapter__title {
+  margin-bottom: 2.4rem;
+}
+
+.theorem__header__label,
+.theorem__header--proof {
+  font-weight: normal;
+  font-variant: small-caps;
+}
+
+.titlepage {
+  display: flex;
+  min-height: 90vh;
+  margin-top: 5vh;
+}
+
+.titlepage__series {
+  margin-left: 1rem;
+  margin-right: 0.5rem;
+  text-align: right;
+  font-size: 0.8rem;
+  font-weight: bolder;
+}
+
+.titlepage__series > p {
+  text-align: right;
+}
+
+.titlepage__divider {
+  padding-left: 1rem;
+  border-left: 0.33rem solid;
+}
+
+.titlepage__title {
+  text-align: left;
+  margin-top: 10vh;
+  font-size: 2.4rem;
+  line-height: 1.3;
+}
+
+.titlepage__subtitle {
+  margin-top: 1.5rem;
+  margin-bottom: 10vh;
+}
+
+.titlepage__contributors {
+  font-weight: normal;
+}
+
+@media (width < 480px) {
+  .titlepage {
+    display: block;
+  }
+  .titlepage__divider {
+    border-left: none;
+    border-top: 0.33rem solid;
+  }
+}
+

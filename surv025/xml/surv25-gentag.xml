@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE monograph PUBLIC "-//AMS//DTD GENTAG 2.00//en" "gentag2.dtd">
+
+<monograph>
+    <title>
+        <tex>Asymptotic Behavior of Dissipative Systems</tex>
+        <html>Asymptotic Behavior of Dissipative Systems</html>
+        <ascii>Asymptotic Behavior of Dissipative Systems</ascii>
+    </title>
+    <author>
+        <name>
+            <surname>
+                <tex>Hale</tex>
+                <html>Hale</html>
+                <ascii>Hale</ascii>
+            </surname>
+            <given>
+                <tex>Jack</tex>
+                <html>Jack</html>
+                <ascii>Jack</ascii>
+            </given>
+            <middle>
+                <tex>K.</tex>
+                <html>K.</html>
+                <ascii>K.</ascii>
+            </middle>
+        </name>
+    </author>
+    <copyright>
+        <year>1988</year>
+        <owner>American Mathematical Society</owner>
+    </copyright>
+    <publication>
+        <publ_key>surv</publ_key>
+        <full_title>Mathematical Surveys and Monographs</full_title>
+        <abbrev_title>Math. Surveys Monogr.</abbrev_title>
+        <issn type="print">0076-5376</issn>
+        <issn type="electronic">2331-7159</issn>
+    </publication>
+    <publisher pcode="AMS">American Mathematical Society</publisher>
+    <volume_id>v25</volume_id>
+    <itemcode>SURV/25.S</itemcode>
+    <numpages>208</numpages>
+    <isbn type="print">978-0-8218-4934-7</isbn>
+    <isbn type="electronic">978-1-4704-1252-4</isbn>
+    <lccn>87-33495</lccn>
+    <lccall/>
+    <doi>10.1090/surv/025</doi>
+    <uri scheme="https">
+        <host>www.ams.org</host>
+        <path>/surv/025</path>
+    </uri>
+    <msc source="msn" schema="1991">
+        <primary>58Fxx</primary>
+        <secondary>34C35</secondary>
+        <secondary>35B40</secondary>
+        <secondary>58F09</secondary>
+        <secondary>58F12</secondary>
+    </msc>
+    <mr>MR941371</mr>
+    <volume>25</volume>
+    <pubdate>
+        <year>2010</year>
+        <month>January</month>
+        <day>4</day>
+    </pubdate>
+    <language>English</language>
+    <contents>
+        <unnumbered type="chapter" manid="01"/>
+        <unnumbered type="chapter" manid="02"/>
+        <unnumbered type="chapter" manid="03"/>
+        <unnumbered type="chapter" manid="04"/>
+    </contents>
+</monograph>
