@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<book>
+	<bookid>surv025</bookid>
+	<title>Sample Book Title</title>
+	<author>John Doe</author>
+	<publisher>AMS</publisher>
+	<year>2025</year>
+	<chapters>
+		<chapter number="1">
+			<title>Introduction</title>
+			<pages>1-10</pages>
+		</chapter>
+		<chapter number="2">
+			<title>Background</title>
+			<pages>11-25</pages>
+		</chapter>
+	</chapters>
+</book>
